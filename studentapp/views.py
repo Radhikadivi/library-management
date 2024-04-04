@@ -9,6 +9,7 @@ from rest_framework.decorators  import  api_view
 from datetime import datetime,timedelta
 from time import timezone
 # Create your views here.
+# see the books availability 
 class BookList(generics.ListAPIView):    
         queryset = Book.objects.all()
         serializer_class  = BookSerializer
@@ -34,7 +35,7 @@ class BookList(generics.ListAPIView):
                         'next_returned_date':next_returned_date
                     })
             return Response(response_data)
-
+# see the student borrowings by student name
 class Studentborrowings(generics.ListAPIView):
     serializer_class = BorrowSerializer
 
@@ -47,20 +48,7 @@ class Studentborrowings(generics.ListAPIView):
         serialized_data = self.serializer_class(query_set,many = True).data
         return Response(serialized_data)
     
-# # class RenewelBooking(generics.UpdateAPIView):  
-#     print("hiii") 
-#     query_set = Borrowing.objects.all()
-#     # print(query_set.values())
-#     serializer_class = BorrowSerializer
-#     print("hii")
-#     def update(self,request,*args,**kwargs):
-#         instance = self.get_object()
-#         if not instance.renewed:
-#             instance.renewed = True
-#             instance.save()
-#             return Response({"message":"renewel was succesful"},status = status.HTTP_200_OK)
-#         else:
-#             return Response({"message":"book has already been renewed once"},status =status.HTTP_200_OK)  
+#renewl the borrowings or books
 @api_view(['PUT'])
 def renew_booking(request,borrowing_id):
      try:
@@ -82,12 +70,14 @@ def renew_booking(request,borrowing_id):
         return Response({"message":"boorowing renewl suucessfull"},status=status.HTTP_200_OK)
      except Borrowing.DoesNotExist:
         return Response({"message":"borrowing not found"},status=status.HTTP_400_BAD_REQUEST) 
+# views the borrowings by the librarian
 @api_view(["GET"])
 def view_borrowing_information(request):
     borrowings = Borrowing.objects.all()
     serializer = BorrowSerializer(borrowings, many = True)
     return Response(serializer.data)
 
+# make it as mark borrowed by the librarian
 @api_view(['POST'])
 def mark_borrowed(request):
     student_id = request.data.get('student_id')
@@ -109,6 +99,7 @@ def mark_borrowed(request):
     except Student.DoesNotExist:
         return Response({"message":"Student not found"},status=status.HTTP_404_NOT_FOUND)
     
+# make it as mark returned by the librarian
         
 @api_view(['PUT'])
 def mark_returned(request):
