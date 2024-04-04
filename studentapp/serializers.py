@@ -11,3 +11,4 @@ class BorrowSerializer(serializers.ModelSerializer):
         model = Borrowing
         fields = '__all__'
         
+        
